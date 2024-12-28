@@ -90,4 +90,14 @@ function saveDate(date) {
     });
 }
 
+function setMeetingDate() {
+    const dateInput = document.getElementById("meetingDate").value;
+    if (dateInput) {
+        saveDate(dateInput);
+        alert("Data spotkania została zapisana!");
+    } else {
+        alert("Proszę podać datę!");
+    }
+}
+
 document.addEventListener("DOMContentLoaded", getDate);
