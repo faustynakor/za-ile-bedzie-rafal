@@ -18,8 +18,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-function startCountdown() {
-    const meetingTime = document.getElementById("meeting-time").value;
+function startCountdown(savedDate=null) {
+    const meetingTime = savedDate || document.getElementById("meeting-time").value;
     if (!meetingTime) {
         alert("Wprowadź datę i godzinę spotkania!");
         return;
@@ -88,10 +88,18 @@ function saveDate(date) {
     .catch((error) => {
         console.error("Błąd pobierania daty: ", error);
     });
+
+    if (snapshot.exists()) {
+        const savedDate = snapshot.val();
+        console.log("Zapisana data: ", savedDate);
+        document.getElementById("meeting-time").value = savedDate; // Ustaw wartość pola
+        startCountdown(savedDate); // Rozpocznij odliczanie
+    }
+    
 }
 
 function setMeetingDate() {
-    const dateInput = document.getElementById("meetingDate").value;
+    const dateInput = document.getElementById("meeting-time").value;
     if (dateInput) {
         saveDate(dateInput);
         alert("Data spotkania została zapisana!");
