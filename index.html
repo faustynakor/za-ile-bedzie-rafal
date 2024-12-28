@@ -12,7 +12,14 @@
         <label for="meeting-time">Data i godzina spotkania:</label>
         <input type="datetime-local" id="meeting-time">
         <button onclick="startCountdown()">Odliczaj!</button>
-        <div id="countdown"></div>
+        <!-- Drugi input z etykietą -->
+        <label for="meetingDate">Zapisz datę spotkania:</label>
+        <input type="datetime-local" id="meetingDate" />
+        
+        <button onclick="setMeetingDate()">Zapisz datę</button> 
+        
+        <!-- Jeden div dla odliczania -->
+        <div id="countdown">Odliczanie...</div>
     </div>
     <script src="app.js"></script>
 </body>

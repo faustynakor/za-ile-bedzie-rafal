@@ -1,3 +1,23 @@
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDmkKCkLAvQNKEGuvcGfSnUjlSo3iDKe_w",
+  authDomain: "zailerafal.firebaseapp.com",
+  databaseURL: "https://zailerafal-default-rtdb.firebaseio.com",
+  projectId: "zailerafal",
+  storageBucket: "zailerafal.firebasestorage.app",
+  messagingSenderId: "995010930486",
+  appId: "1:995010930486:web:ea6a93a2a33bb8593ef597"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
 function startCountdown() {
     const meetingTime = document.getElementById("meeting-time").value;
     if (!meetingTime) {
@@ -34,5 +54,51 @@ function startCountdown() {
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/service-worker.js').then(() => {
         console.log("Service Worker zarejestrowany!");
+    }).catch((error) => {
+        console.error("Błąd rejestracji Service Workera: ", error);
     });
 }
+
+
+function saveDate(date) {
+    const dateRef = ref(db, "meetingDate/");
+    set(dateRef, {
+      date: date,
+    })
+      .then(() => {
+        console.log("Data saved successfully!");
+      })
+      .catch((error) => {
+        console.error("Error saving data: ", error);
+      });
+  }
+
+  function getDate() {
+    const dateRef = ref(db, "meetingDate/date");
+    get(dateRef)
+    .then((snapshot) => {
+        if (snapshot.exists()) {
+            const savedDate = snapshot.val();
+            console.log("Zapisana data: ", savedDate);
+            // Update countdown with the saved date
+            startCountdown(savedDate); // Fix: Corrected to call startCountdown
+        } else {
+            console.log("Brak zapisanej daty.");
+        }
+    })
+    .catch((error) => {
+        console.error("Błąd pobierania daty: ", error);
+    });
+}
+  
+function setMeetingDate() {
+    const dateInput = document.getElementById("meetingDate").value;
+    if (dateInput) {
+        saveDate(dateInput);
+        alert("Data spotkania została zapisana!");
+    } else {
+        alert("Proszę podać datę!");
+    }
+}
+
+document.addEventListener("DOMContentLoaded", getDate);
