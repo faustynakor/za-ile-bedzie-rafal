@@ -16,9 +16,10 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
 const db = getDatabase(app);
 
-function startCountdown(savedDate=null) {
+function startCountdown(savedDate = null) {
     const meetingTime = savedDate || document.getElementById("meeting-time").value;
     if (!meetingTime) {
         alert("Wprowadź datę i godzinę spotkania!");
@@ -52,52 +53,49 @@ function startCountdown(savedDate=null) {
 }
 
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js').then(() => {
-        console.log("Service Worker zarejestrowany!");
-    }).catch((error) => {
-        console.error("Błąd rejestracji Service Workera: ", error);
-    });
+    navigator.serviceWorker.register('/service-worker.js')
+        .then(() => {
+            console.log("Service Worker zarejestrowany!");
+        })
+        .catch((error) => {
+            console.error("Błąd rejestracji Service Workera: ", error);
+        });
+} else {
+    console.log("Service Worker nie jest wspierany przez tę przeglądarkę.");
 }
 
-
+// Zapis daty do Firebase
 function saveDate(date) {
-    const dateRef = ref(db, "meetingDate/");
-    set(dateRef, {
-      date: date,
-    })
-      .then(() => {
-        console.log("Data saved successfully!");
-      })
-      .catch((error) => {
-        console.error("Error saving data: ", error);
-      });
-  }
+    const dateRef = ref(db, "meetingDate/date");
+    set(dateRef, date)
+        .then(() => {
+            console.log("Data zapisana pomyślnie!");
+        })
+        .catch((error) => {
+            console.error("Błąd zapisu danych: ", error);
+        });
+}
 
-  function getDate() {
+// Pobieranie daty z Firebase
+function getDate() {
     const dateRef = ref(db, "meetingDate/date");
     get(dateRef)
-    .then((snapshot) => {
-        if (snapshot.exists()) {
-            const savedDate = snapshot.val();
-            console.log("Zapisana data: ", savedDate);
-            startCountdown(savedDate); 
-        } else {
-            console.log("Brak zapisanej daty.");
-        }
-    })
-    .catch((error) => {
-        console.error("Błąd pobierania daty: ", error);
-    });
-
-    if (snapshot.exists()) {
-        const savedDate = snapshot.val();
-        console.log("Zapisana data: ", savedDate);
-        document.getElementById("meeting-time").value = savedDate; // Ustaw wartość pola
-        startCountdown(savedDate); // Rozpocznij odliczanie
-    }
-    
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const savedDate = snapshot.val();
+                console.log("Zapisana data: ", savedDate);
+                document.getElementById("meeting-time").value = savedDate;
+                startCountdown(savedDate);
+            } else {
+                console.log("Brak zapisanej daty.");
+            }
+        })
+        .catch((error) => {
+            console.error("Błąd pobierania daty: ", error);
+        });
 }
 
+// Ustawienie daty
 function setMeetingDate() {
     const dateInput = document.getElementById("meeting-time").value;
     if (dateInput) {
@@ -108,4 +106,4 @@ function setMeetingDate() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", getDate);
+// Ładowanie s
