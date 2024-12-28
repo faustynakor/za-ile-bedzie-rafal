@@ -17,7 +17,6 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-const db = getDatabase(app);
 
 function startCountdown(savedDate = null) {
     const meetingTime = savedDate || document.getElementById("meeting-time").value;
@@ -66,7 +65,7 @@ if ('serviceWorker' in navigator) {
 
 // Zapis daty do Firebase
 function saveDate(date) {
-    const dateRef = ref(db, "meetingDate/date");
+    const dateRef = ref(app, "meetingDate/date");
     set(dateRef, date)
         .then(() => {
             console.log("Data zapisana pomyślnie!");
@@ -78,7 +77,7 @@ function saveDate(date) {
 
 // Pobieranie daty z Firebase
 function getDate() {
-    const dateRef = ref(db, "meetingDate/date");
+    const dateRef = ref(app, "meetingDate/date");
     get(dateRef)
         .then((snapshot) => {
             if (snapshot.exists()) {
