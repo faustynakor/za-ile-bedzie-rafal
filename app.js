@@ -80,8 +80,7 @@ function saveDate(date) {
         if (snapshot.exists()) {
             const savedDate = snapshot.val();
             console.log("Zapisana data: ", savedDate);
-            // Update countdown with the saved date
-            startCountdown(savedDate); // Fix: Corrected to call startCountdown
+            startCountdown(savedDate); 
         } else {
             console.log("Brak zapisanej daty.");
         }
@@ -89,16 +88,6 @@ function saveDate(date) {
     .catch((error) => {
         console.error("Błąd pobierania daty: ", error);
     });
-}
-  
-function setMeetingDate() {
-    const dateInput = document.getElementById("meetingDate").value;
-    if (dateInput) {
-        saveDate(dateInput);
-        alert("Data spotkania została zapisana!");
-    } else {
-        alert("Proszę podać datę!");
-    }
 }
 
 document.addEventListener("DOMContentLoaded", getDate);
