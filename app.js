@@ -17,6 +17,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+console.log("Firebase zainicjalizowany:", app);
+console.log("Połączenie z bazą danych:", db);
+
 function startCountdown(date) {
     const meetingTime = date;
     if (!meetingTime) {
