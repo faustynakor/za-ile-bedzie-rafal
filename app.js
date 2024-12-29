@@ -20,6 +20,18 @@ const db = getDatabase(app);
 console.log("Firebase zainicjalizowany:", app);
 console.log("Połączenie z bazą danych:", db);
 
+console.log("Firebase config:", firebaseConfig);
+
+try {
+    const app = initializeApp(firebaseConfig);
+    console.log("Firebase zainicjalizowany:", app);
+    const db = getDatabase(app);
+    console.log("Połączenie z bazą danych:", db);
+} catch (error) {
+    console.error("Błąd inicjalizacji Firebase:", error);
+}
+
+
 function startCountdown(date) {
     const meetingTime = date;
     if (!meetingTime) {
