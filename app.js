@@ -49,7 +49,7 @@ function getDate() {
 }
 
 // Funkcja ustawiająca datę i zapisująca ją w Firebase
-export function setMeetingDate() {
+function setMeetingDate() {
     const dateInput = document.getElementById("meeting-time").value;
     if (dateInput) {
         saveDate(dateInput);
@@ -87,6 +87,9 @@ function startCountdown(date) {
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
 }
+
+// Udostępnienie funkcji w globalnym zakresie
+window.setMeetingDate = setMeetingDate;
 
 // Pobierz datę z Firebase, kiedy strona się ładuje
 document.addEventListener("DOMContentLoaded", getDate);
