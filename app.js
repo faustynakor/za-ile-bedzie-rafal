@@ -1,26 +1,23 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set, get } from "firebase/database";
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyDmkKCkLAvQNKEGuvcGfSnUjlSo3iDKe_w",
-    authDomain: "zailerafal.firebaseapp.com",
-    databaseURL: "https://zailerafal-default-rtdb.firebaseio.com",
-    projectId: "zailerafal",
-    storageBucket: "zailerafal.firebasestorage.app",
-    messagingSenderId: "995010930486",
-    appId: "1:995010930486:web:ea6a93a2a33bb8593ef597"
-};
+    const firebaseConfig = {
+        apiKey: "API_KEY",
+        authDomain: "zailerafal.firebaseapp.com",
+        databaseURL: "https://zailerafal-default-rtdb.firebaseio.com",
+        projectId: "zailerafal",
+        storageBucket: "zailerafal.appspot.com",
+        messagingSenderId: "995010930486",
+        appId: "1:995010930486:web:ea6a93a2a33bb8593ef597"
+    };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-console.log("Firebase zainicjalizowany:", app);
-console.log("Połączenie z bazą danych:", db);
+    console.log("Firebase zainicjalizowany:", app);
+</script>
 
-console.log("Firebase config:", firebaseConfig);
 
 try {
     const app = initializeApp(firebaseConfig);
