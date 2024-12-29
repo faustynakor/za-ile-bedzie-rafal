@@ -1,5 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import { getDatabase, ref, set, get } from "firebase/database";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -16,7 +17,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
+const db = getDatabase(app);
 
 function startCountdown(savedDate = null) {
     const meetingTime = savedDate || document.getElementById("meeting-time").value;
@@ -46,7 +47,6 @@ function startCountdown(savedDate = null) {
         countdownElement.textContent = 
             `Do spotkania z Rafałem pozostało: ${days} dni, ${hours} godzin, ${minutes} minut, ${seconds} sekund`;
     }
-
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
 }
@@ -65,7 +65,7 @@ if ('serviceWorker' in navigator) {
 
 // Zapis daty do Firebase
 function saveDate(date) {
-    const dateRef = ref(app, "meetingDate/date");
+    const dateRef = ref(db, "meetingDate/date");
     set(dateRef, date)
         .then(() => {
             console.log("Data zapisana pomyślnie!");
@@ -77,7 +77,7 @@ function saveDate(date) {
 
 // Pobieranie daty z Firebase
 function getDate() {
-    const dateRef = ref(app, "meetingDate/date");
+    const dateRef = ref(db, "meetingDate/date");
     get(dateRef)
         .then((snapshot) => {
             if (snapshot.exists()) {
@@ -104,5 +104,3 @@ function setMeetingDate() {
         alert("Proszę podać datę!");
     }
 }
-
-// Ładowanie s
