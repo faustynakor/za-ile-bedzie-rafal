@@ -64,15 +64,21 @@ function setMeetingDate() {
 function startCountdown(date) {
     const meetingDate = new Date(date);
     const countdownElement = document.getElementById("countdown");
+    const gifElement = document.getElementById("gif");
 
     function updateCountdown() {
         const now = new Date();
         const timeDifference = meetingDate - now;
-
+    
         if (timeDifference <= 0) {
             countdownElement.textContent = "Spotkanie z Rafałem już trwa!";
+            gifElement.src = "gifs/gif2.gif"; // GIF na czas spotkania
+            gifElement.alt = "Spotkanie trwa";
             clearInterval(interval);
             return;
+        } else {
+            gifElement.src = "gifs/gif1.gif"; // GIF oczekiwania
+            gifElement.alt = "Oczekiwanie na spotkanie";
         }
 
         const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
@@ -83,6 +89,7 @@ function startCountdown(date) {
         countdownElement.textContent =
             `Do spotkania z Rafałem pozostało: ${days} dni, ${hours} godzin, ${minutes} minut, ${seconds} sekund`;
     }
+    
 
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
