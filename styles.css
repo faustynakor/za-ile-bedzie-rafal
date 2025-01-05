@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: Helvetica, sans-serif;
     text-align: center;
     padding: 20px;
 }
@@ -8,9 +8,10 @@ body {
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
-    border: 1px solid #ddd;
+    border: 1px solid #ff61b8;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: none;
+    //4px 8px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
@@ -27,5 +28,5 @@ input, button {
 #countdown {
     margin-top: 20px;
     font-size: 1.5rem;
-    color: #333;
+    color: #000000;
 }
