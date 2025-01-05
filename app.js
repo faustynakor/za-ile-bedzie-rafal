@@ -69,6 +69,7 @@ function startCountdown(date) {
     function updateCountdown() {
         const now = new Date();
         const timeDifference = meetingDate - now;
+        console.log("timeDifference:", timeDifference);
     
         if (timeDifference <= 0) {
             countdownElement.textContent = "Spotkanie z Rafałem już trwa!";
@@ -77,8 +78,10 @@ function startCountdown(date) {
             clearInterval(interval);
             return;
         } else {
-            gifElement.src = "gifs/gif1.gif"; // GIF oczekiwania
-            gifElement.alt = "Oczekiwanie na spotkanie";
+            if (timeDifference <= 0) {
+                gifElement.src = "gifs/gif1.gif"; // GIF oczekiwania
+                gifElement.alt = "Oczekiwanie na spotkanie";
+            }
         }
 
         const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
