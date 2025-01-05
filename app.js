@@ -19,7 +19,7 @@ const db = getDatabase(app);
 
 // Definicja zmiennych globalnych
 
-let interval
+let interval;
 let isGifSet = false;
 
 // Funkcja zapisująca datę do Firebase
@@ -60,7 +60,6 @@ function setMeetingDate() {
         saveDate(dateInput);
         alert("Data spotkania została zapisana!");
         getDate();
-        document.getElementById("display-date").innerText = `Data spotkania: ${dateInput}`;
     } else {
         alert("Proszę podać datę!");
     }
@@ -105,7 +104,7 @@ function startCountdown(date) {
     }
 
     updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
+    interval = setInterval(updateCountdown, 1000);
 }
 
 // Udostępnienie funkcji w globalnym zakresie
