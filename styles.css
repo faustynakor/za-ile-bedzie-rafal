@@ -8,10 +8,11 @@ body {
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
-    border: 1px solid #ff61b8;
+    border: 1px solid #ffffff;
     border-radius: 8px;
     box-shadow: none;
-    //4px 8px rgba(0, 0, 0, 0.1);
+    //4px 8px rgba(0, 0, 0, 0.1)
+    background-color: #ffffff;
 }
 
 h1 {
