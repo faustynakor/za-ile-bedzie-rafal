@@ -71,26 +71,23 @@ function startCountdown(date) {
     function updateCountdown() {
         const now = new Date();
         const timeDifference = meetingDate - now;
-        console.log("timeDifference:", timeDifference);
 
         if (timeDifference <= 0) {
             countdownElement.textContent = "Spotkanie z Rafałem już trwa!";
-    
-            // Ustaw GIF na czas spotkania tylko raz
+
             if (!isGifSet) {
-                gifElement.src = "gifs/gif2.gif"; // GIF na czas spotkania
+                gifElement.src = "gifs/gif2.gif"; 
                 gifElement.alt = "Spotkanie trwa";
-                isGifSet = true; // Oznacz, że GIF został ustawiony
+                isGifSet = true;
             }
-    
-            clearInterval(interval); // Zatrzymanie odliczania
+            clearInterval(interval); 
             return;
         } else {
-            // Ustaw GIF oczekiwania tylko raz
+
             if (!isGifSet) {
-                gifElement.src = "gifs/gif1.gif"; // GIF oczekiwania
+                gifElement.src = "gifs/gif1.gif";
                 gifElement.alt = "Oczekiwanie na spotkanie";
-                isGifSet = true; // Oznacz, że GIF został ustawiony
+                isGifSet = true;
             }
         }
 
@@ -102,7 +99,6 @@ function startCountdown(date) {
         countdownElement.textContent =
             `Do spotkania z Rafałem pozostało: ${days} dni, ${hours} godzin, ${minutes} minut, ${seconds} sekund`;
     }
-    
 
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
