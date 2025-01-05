@@ -37,6 +37,7 @@ function saveDate(date) {
 // Funkcja pobierająca datę z Firebase i uruchamiająca odliczanie
 function getDate() {
     const dateRef = ref(db, "meetingDate/date");
+    isGifSet = false;
     get(dateRef)
         .then((snapshot) => {
             if (snapshot.exists()) {
@@ -58,7 +59,7 @@ function setMeetingDate() {
     const dateInput = document.getElementById("meeting-time").value;
     if (dateInput) {
         saveDate(dateInput);
-        alert("Data spotkania została zapisana!");
+        console.log("Data spotkania została zapisana!");
         console.log('Zatrzymuję interwał');
         clearInterval(interval); 
         isGifSet = true;
