@@ -79,16 +79,11 @@ function startCountdown(date) {
         const now = new Date();
         const timeDifference = meetingDate - now;
 
-        console.log('Aktualizacja odliczania', timeDifference);
-
         if (timeDifference <= 0) {
             countdownElement.textContent = "Spotkanie z Rafałem już trwa!";
-
-            if (!isGifSet) {
-                gifElement.src = "gifs/gif2.gif"; 
-                gifElement.alt = "Spotkanie trwa";
-                isGifSet = true;
-            }
+            
+            gifElement.src = "gifs/gif2.gif"; 
+            gifElement.alt = "Spotkanie trwa";
 
             console.log('Zatrzymuję interwał');
             clearInterval(interval); 
