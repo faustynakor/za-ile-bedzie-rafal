@@ -61,6 +61,7 @@ function setMeetingDate() {
         alert("Data spotkania została zapisana!");
         console.log('Zatrzymuję interwał');
         clearInterval(interval); 
+        isGifSet = true;
         getDate();
     } else {
         alert("Proszę podać datę!");
@@ -81,7 +82,7 @@ function startCountdown(date) {
 
         if (timeDifference <= 0) {
             countdownElement.textContent = "Spotkanie z Rafałem już trwa!";
-            
+
             gifElement.src = "gifs/gif2.gif"; 
             gifElement.alt = "Spotkanie trwa";
 
