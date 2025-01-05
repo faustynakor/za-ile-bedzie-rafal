@@ -59,6 +59,8 @@ function setMeetingDate() {
     if (dateInput) {
         saveDate(dateInput);
         alert("Data spotkania została zapisana!");
+        console.log('Zatrzymuję interwał');
+        clearInterval(interval); 
         getDate();
     } else {
         alert("Proszę podać datę!");
