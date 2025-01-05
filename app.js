@@ -60,6 +60,8 @@ function setMeetingDate() {
     }
 }
 
+let isGifSet = false;
+
 // Funkcja obsługująca odliczanie
 function startCountdown(date) {
     const meetingDate = new Date(date);
