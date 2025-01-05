@@ -1,5 +1,5 @@
 body {
-    font-family: Helvetica, sans-serif;
+    font-family: "Roboto", sans-serif;
     text-align: center;
     padding: 20px;
 }
@@ -11,8 +11,7 @@ body {
     border: 1px solid #ffffff;
     border-radius: 8px;
     box-shadow: none;
-    //4px 8px rgba(0, 0, 0, 0.1)
-    background-color: #ffffff;
+    background-color: #f069a8;
 }
 
 h1 {
