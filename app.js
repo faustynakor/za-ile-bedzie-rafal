@@ -71,9 +71,13 @@ function startCountdown(date) {
     const countdownElement = document.getElementById("countdown");
     const gifElement = document.getElementById("gif");
 
+    console.log('Elementy do odliczania:', countdownElement, gifElement);
+
     function updateCountdown() {
         const now = new Date();
         const timeDifference = meetingDate - now;
+
+        console.log('Aktualizacja odliczania', timeDifference);
 
         if (timeDifference <= 0) {
             countdownElement.textContent = "Spotkanie z Rafałem już trwa!";
@@ -83,6 +87,8 @@ function startCountdown(date) {
                 gifElement.alt = "Spotkanie trwa";
                 isGifSet = true;
             }
+
+            console.log('Zatrzymuję interwał');
             clearInterval(interval); 
             return;
         } else {
@@ -105,6 +111,7 @@ function startCountdown(date) {
 
     updateCountdown();
     interval = setInterval(updateCountdown, 1000);
+    console.log('Interwał uruchomiony:', interval);
 }
 
 // Udostępnienie funkcji w globalnym zakresie
