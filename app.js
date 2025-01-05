@@ -65,25 +65,30 @@ function startCountdown(date) {
     const meetingDate = new Date(date);
     const countdownElement = document.getElementById("countdown");
     const gifElement = document.getElementById("gif");
-    const update = 0
 
     function updateCountdown() {
         const now = new Date();
         const timeDifference = meetingDate - now;
         console.log("timeDifference:", timeDifference);
 
-        update = update +1
-    
         if (timeDifference <= 0) {
             countdownElement.textContent = "Spotkanie z Rafałem już trwa!";
-            gifElement.src = "gifs/gif2.gif"; // GIF na czas spotkania
-            gifElement.alt = "Spotkanie trwa";
-            clearInterval(interval);
+    
+            // Ustaw GIF na czas spotkania tylko raz
+            if (!isGifSet) {
+                gifElement.src = "gifs/gif2.gif"; // GIF na czas spotkania
+                gifElement.alt = "Spotkanie trwa";
+                isGifSet = true; // Oznacz, że GIF został ustawiony
+            }
+    
+            clearInterval(interval); // Zatrzymanie odliczania
             return;
         } else {
-            if (update < 1) {
+            // Ustaw GIF oczekiwania tylko raz
+            if (!isGifSet) {
                 gifElement.src = "gifs/gif1.gif"; // GIF oczekiwania
                 gifElement.alt = "Oczekiwanie na spotkanie";
+                isGifSet = true; // Oznacz, że GIF został ustawiony
             }
         }
 
