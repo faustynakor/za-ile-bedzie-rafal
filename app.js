@@ -17,6 +17,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// Definicja zmiennych globalnych
+
+let interval
+let isGifSet = false;
+
 // Funkcja zapisująca datę do Firebase
 function saveDate(date) {
     const dateRef = ref(db, "meetingDate/date");
@@ -54,13 +59,14 @@ function setMeetingDate() {
     if (dateInput) {
         saveDate(dateInput);
         alert("Data spotkania została zapisana!");
+        if (interval) {
+            clearInterval(interval);
+        }
         getDate();
     } else {
         alert("Proszę podać datę!");
     }
 }
-
-let isGifSet = false;
 
 // Funkcja obsługująca odliczanie
 function startCountdown(date) {
