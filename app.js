@@ -71,18 +71,28 @@ function getDate() {
 
 function setMeetingDate() {
     const dateInput = document.getElementById("meeting-time").value;
+
     if (dateInput) {
-        const userConfirmed = window.confirm("Czy na pewno nie chcesz wcześniej się spotkać?");
-        if (userConfirmed) {
+        // Pokaż niestandardowy modal
+        const modal = document.getElementById("custom-alert");
+        modal.classList.remove("hidden");
+
+        // Obsługa przycisku "Tak, chcę"
+        document.getElementById("confirm-yes").onclick = () => {
+            modal.classList.add("hidden");
             saveDate(dateInput);
             console.log("Data spotkania została zapisana!");
-            console.log('Zatrzymuję interwał');
-            clearInterval(interval); 
+            console.log("Zatrzymuję interwał");
+            clearInterval(interval);
             isGifSet = true;
             getDate();
-        } else {
-            console.log("Użytkownik anulował zapis daty.");
-        }
+        };
+
+        // Obsługa przycisku "Nie, nie chcę"
+        document.getElementById("confirm-no").onclick = () => {
+            modal.classList.add("hidden");
+            console.log("Użytkownik wybrał: Nie, nie chcę.");
+        };
     } else {
         alert("Proszę podać datę!");
     }
