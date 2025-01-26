@@ -77,8 +77,8 @@ function setMeetingDate() {
         const modal = document.getElementById("custom-alert");
         modal.classList.remove("hidden");
 
-        // Obsługa przycisku "Tak, chcę"
-        document.getElementById("confirm-yes").onclick = () => {
+        // Obsługa przycisku "Nie, nie chcę"
+        document.getElementById("confirm-no").onclick = () => {
             modal.classList.add("hidden");
             // Zapisz datę, jeśli użytkownik potwierdzi
             saveDate(dateInput);
@@ -89,8 +89,8 @@ function setMeetingDate() {
             getDate();
         };
 
-        // Obsługa przycisku "Nie, nie chcę"
-        document.getElementById("confirm-no").onclick = () => {
+        // Obsługa przycisku "Tak, chcę"
+        document.getElementById("confirm-yes").onclick = () => {
             modal.classList.add("hidden");
             console.log("Użytkownik wybrał: Nie, nie chcę.");
         };

@@ -13,7 +13,7 @@
         <h1>Za ile będzie Rafał?</h1>
         <label for="meeting-time">Data i godzina spotkania:</label>
         <input type="datetime-local" id="meeting-time">
-        <button onclick="setMeetingDate(); ">Odliczaj!</button>
+        <button onclick="setMeetingDate(); ">Zatwierdź i odliczaj!</button>
         <div id="countdown"></div>
 
     <div id="gif-container">
@@ -25,9 +25,9 @@
 
     <div id="custom-alert" class="modal hidden">
         <div class="modal-content">
-            <p>Jesteś pewien? A może wcześniej sie spotkamy?</p>
-            <button id="confirm-yes">Tak! Już zmieniam datę</button>
-            <button id="confirm-no">Nie, nie chcę</button>
+            <p>Czy na pewno chcesz potwierdzić datę? Jeszcze masz szansę na zmianę!</p>
+            <button id="confirm-yes">Nie! Już zmieniam datę</button>
+            <button id="confirm-no">Tak, potwierdzam</button>
         </div>
     </div>
     
@@ -61,11 +61,11 @@
             cursor: pointer;
         }
         #confirm-yes {
-            background-color: #4caf50;
+            background-color: #86cffc;
             color: white;
         }
         #confirm-no {
-            background-color: #f44336;
+            background-color: #fe6e72;
             color: white;
         }
     </style>
