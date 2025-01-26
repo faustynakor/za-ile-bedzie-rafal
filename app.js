@@ -55,19 +55,39 @@ function getDate() {
 }
 
 // Funkcja ustawiająca datę i zapisująca ją w Firebase
+// function setMeetingDate() {
+//     const dateInput = document.getElementById("meeting-time").value;
+//     if (dateInput) {
+//         saveDate(dateInput);
+//         console.log("Data spotkania została zapisana!");
+//         console.log('Zatrzymuję interwał');
+//         clearInterval(interval); 
+//         isGifSet = true;
+//         getDate();
+//     } else {
+//         alert("Proszę podać datę!");
+//     }
+// }
+
 function setMeetingDate() {
     const dateInput = document.getElementById("meeting-time").value;
     if (dateInput) {
-        saveDate(dateInput);
-        console.log("Data spotkania została zapisana!");
-        console.log('Zatrzymuję interwał');
-        clearInterval(interval); 
-        isGifSet = true;
-        getDate();
+        const userConfirmed = window.confirm("Czy na pewno nie chcesz wcześniej się spotkać?");
+        if (userConfirmed) {
+            saveDate(dateInput);
+            console.log("Data spotkania została zapisana!");
+            console.log('Zatrzymuję interwał');
+            clearInterval(interval); 
+            isGifSet = true;
+            getDate();
+        } else {
+            console.log("Użytkownik anulował zapis daty.");
+        }
     } else {
         alert("Proszę podać datę!");
     }
 }
+
 
 // Funkcja obsługująca odliczanie
 function startCountdown(date) {
