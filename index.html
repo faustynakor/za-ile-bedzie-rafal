@@ -19,6 +19,14 @@
     <div id="gif-container">
         <img id="gif" src="gifs/gif1.gif" alt="Oczekiwanie na spotkanie" style="width: 300px; height: auto;">
     </div>
+
+    <button id="btnPush" style="margin-top:12px;">Włącz powiadomienia</button>
+    <script>
+    // wstrzykniemy publiczny klucz z Vercel podczas buildu – na razie jako placeholder:
+        window.VAPID_PUBLIC_KEY = 'BBM-HfDVsNm_zJT3VYgA7eWg_jRQrrTTKuvYK7L7_KA-NK2KmkyKM6GB3jeCygYBJm4kOtSxCzLnbdp9SNsytG8';
+    </script>
+    <script src="push.js"></script>
+
     
     </div>
     <script type="module" src="app.js"></script>
