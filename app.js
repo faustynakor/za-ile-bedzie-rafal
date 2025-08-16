@@ -18,7 +18,6 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 // Definicja zmiennych globalnych
-
 let interval;
 let isGifSet = false;
 
@@ -58,26 +57,22 @@ function setMeetingDate() {
     const dateInput = document.getElementById("meeting-time").value;
 
     if (dateInput) {
-        // Pokaż niestandardowy modal
         const modal = document.getElementById("custom-alert");
         modal.classList.remove("hidden");
 
-        // Obsługa przycisku "Nie, nie chcę"
         document.getElementById("confirm-no").onclick = () => {
             modal.classList.add("hidden");
-            // Zapisz datę, jeśli użytkownik potwierdzi
             saveDate(dateInput);
-            console.log("[LOG] Data spotkania została zapisana!");
-            console.log("[LOG] Zatrzymuję odliczanie");
+            console.log("[LOG] Użytkownik wybrał: tak, potwierdzam");
+            console.log("[LOG] Data została zapisana:", dateInput);
             clearInterval(interval);
             isGifSet = true;
             getDate();
         };
 
-        // Obsługa przycisku "Tak, chcę"
         document.getElementById("confirm-yes").onclick = () => {
             modal.classList.add("hidden");
-            console.log("[LOG] Użytkownik wybrał: Nie, nie chcę.");
+            console.log("[LOG] Użytkownik wybrał: Nie, już zmieniam datę");
         };
     } else {
         alert("Proszę podać datę!");
