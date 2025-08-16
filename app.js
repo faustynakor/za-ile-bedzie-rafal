@@ -61,10 +61,17 @@ function setMeetingDate() {
         const modal = document.getElementById("custom-alert");
         modal.classList.remove("hidden");
 
-        document.getElementById("confirm-no").onclick = () => {
+        document.getElementById("confirm-no").onclick = async () => {
             modal.classList.add("hidden");
             saveDate(dateInput);
-            notifyDateChanged(new Date(dateInput).toISOString(), "Użytkownik");
+            
+            try {
+                await notifyDateChanged(new Date(dateInput).toISOString(), "Użytkownik");
+                console.log("[LOG] Broadcast push wysłany");
+            } catch (e) {
+                console.error("[LOG] Błąd wysyłki broadcastu:", e);
+            }
+
             console.log("[LOG] Użytkownik wybrał: Tak, potwierdzam");
             console.log("[LOG] Data została zapisana:", dateInput);
             clearInterval(interval);

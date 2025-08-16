@@ -1,11 +1,15 @@
-// /api/subscribe.js — DIAGNOZA ZAPISU (PATCH)
+// /api/subscribe.js
 const crypto = require('crypto');
 
 const EDGE_CONFIG_ID = process.env.EDGE_CONFIG_ID;
 const VERCEL_API_TOKEN = process.env.VERCEL_API_TOKEN;
 const EDGE_TEAM_ID = process.env.EDGE_TEAM_ID || '';
 
-function qs(obj) { const p = new URLSearchParams(obj); const s = p.toString(); return s ? `?${s}` : ''; }
+function qs(obj) {
+  const p = new URLSearchParams(obj);
+  const s = p.toString();
+  return s ? `?${s}` : '';
+}
 function apiUrl(path, params) {
   const base = `https://api.vercel.com${path}`;
   const extra = Object.assign({}, params || {});
@@ -13,86 +17,70 @@ function apiUrl(path, params) {
   return `${base}${qs(extra)}`;
 }
 
-async function getIndexProbe() {
-  const url = apiUrl(`/v1/edge-config/${EDGE_CONFIG_ID}/items`, { key: 'index' });
-  const res = await fetch(url, { headers: { Authorization: `Bearer ${VERCEL_API_TOKEN}` } });
-  const text = await res.text();
-  return { status: res.status, ok: res.ok, body: safeJson(text) };
+function keyFromEndpoint(endpoint) {
+  return 'push:sub:' + crypto.createHash('sha1').update(endpoint).digest('hex');
 }
 
-async function patchProbe() {
+async function readJson(req) {
+  try {
+    if (req.body && typeof req.body === 'object') return req.body; // na wypadek, gdy parser działa
+    const chunks = [];
+    for await (const chunk of req) chunks.push(chunk);
+    const raw = Buffer.concat(chunks).toString('utf8') || '{}';
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+async function getIndex() {
+  const url = apiUrl(`/v1/edge-config/${EDGE_CONFIG_ID}/items`, { key: 'index' });
+  const res = await fetch(url, { headers: { Authorization: `Bearer ${VERCEL_API_TOKEN}` } });
+  if (res.status === 404) return [];
+  if (!res.ok) throw new Error(`GET index ${res.status} ${await res.text()}`);
+  const json = await res.json();
+  return Array.isArray(json?.items?.[0]?.value) ? json.items[0].value : [];
+}
+
+async function patchEdgeConfig(items) {
   const url = apiUrl(`/v1/edge-config/${EDGE_CONFIG_ID}/items`);
-  const body = { items: [{ operation: 'upsert', key: 'healthcheck', value: { ts: Date.now() } }] };
   const res = await fetch(url, {
     method: 'PATCH',
     headers: {
       Authorization: `Bearer ${VERCEL_API_TOKEN}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(body)
+    body: JSON.stringify({ items })
   });
-  const text = await res.text();
-  return { status: res.status, ok: res.ok, body: safeJson(text) };
+  if (!res.ok) throw new Error(`PATCH ${res.status} ${await res.text()}`);
+  return res.json();
 }
 
-function safeJson(text) { try { return JSON.parse(text); } catch { return { raw: text }; } }
-function keyFromEndpoint(endpoint) { return 'push:sub:' + crypto.createHash('sha1').update(endpoint).digest('hex'); }
-
 module.exports = async (req, res) => {
-  if (req.method === 'GET') {
-    try {
-      const env = {
-        has_EDGE_CONFIG_ID: !!EDGE_CONFIG_ID,
-        looks_like_id: EDGE_CONFIG_ID ? EDGE_CONFIG_ID.startsWith('ecfg_') : null,
-        has_VERCEL_API_TOKEN: !!VERCEL_API_TOKEN,
-        has_EDGE_TEAM_ID: !!EDGE_TEAM_ID
-      };
-      const indexProbe = await getIndexProbe();
-      const writeProbe = await patchProbe();   // << test zapisu
-      return res.status(200).json({ ok: true, env, indexProbe, writeProbe });
-    } catch (e) {
-      return res.status(200).json({ ok: false, error: String(e) });
-    }
-  }
-
   if (req.method !== 'POST') return res.status(405).end();
 
   try {
     if (!EDGE_CONFIG_ID || !VERCEL_API_TOKEN) {
       return res.status(500).json({ error: 'Missing EDGE_CONFIG_ID or VERCEL_API_TOKEN' });
     }
-    const sub = req.body;
-    if (!sub || !sub.endpoint) return res.status(400).json({ error: 'Brak subscription.endpoint' });
 
-    // normalny zapis (jak wcześniej)
-    const idxUrl = apiUrl(`/v1/edge-config/${EDGE_CONFIG_ID}/items`, { key: 'index' });
-    const idxRes = await fetch(idxUrl, { headers: { Authorization: `Bearer ${VERCEL_API_TOKEN}` } });
-    let index = [];
-    if (idxRes.ok) {
-      const j = await idxRes.json();
-      index = Array.isArray(j?.items?.[0]?.value) ? j.items[0].value : [];
-    } else if (idxRes.status !== 404) {
-      const t = await idxRes.text(); throw new Error(`GET index ${idxRes.status} ${t}`);
+    const sub = await readJson(req);
+    if (!sub || !sub.endpoint) {
+      return res.status(400).json({ error: 'Brak subscription.endpoint' });
     }
 
     const key = keyFromEndpoint(sub.endpoint);
+    const index = await getIndex();
     if (!index.includes(key)) index.push(key);
 
-    const patchUrl = apiUrl(`/v1/edge-config/${EDGE_CONFIG_ID}/items`);
-    const patchBody = { items: [
+    await patchEdgeConfig([
       { operation: 'upsert', key, value: sub },
       { operation: 'upsert', key: 'index', value: index }
-    ]};
-    const patchRes = await fetch(patchUrl, {
-      method: 'PATCH',
-      headers: { Authorization: `Bearer ${VERCEL_API_TOKEN}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify(patchBody)
-    });
-    if (!patchRes.ok) throw new Error(`PATCH ${patchRes.status} ${await patchRes.text()}`);
+    ]);
 
-    return res.status(200).json({ ok: true });
+    res.status(200).json({ ok: true });
   } catch (e) {
     console.error('subscribe_failed', e);
-    return res.status(500).json({ error: 'subscribe_failed', message: String(e) });
+    res.status(500).json({ error: 'subscribe_failed', message: String(e) });
   }
 };

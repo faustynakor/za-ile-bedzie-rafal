@@ -1,4 +1,4 @@
-// /api/change-date.js (CommonJS)
+// /api/change-date.js
 const webpush = require('web-push');
 
 const EDGE_CONFIG_ID = process.env.EDGE_CONFIG_ID;
@@ -14,8 +14,19 @@ function apiUrl(path, params) {
   const base = `https://api.vercel.com${path}`;
   const extra = Object.assign({}, params || {});
   if (EDGE_TEAM_ID) extra.teamId = EDGE_TEAM_ID;
-  const suffix = qs(extra);
-  return `${base}${suffix}`;
+  return `${base}${qs(extra)}`;
+}
+
+async function readJson(req) {
+  try {
+    if (req.body && typeof req.body === 'object') return req.body;
+    const chunks = [];
+    for await (const chunk of req) chunks.push(chunk);
+    const raw = Buffer.concat(chunks).toString('utf8') || '{}';
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
 }
 
 async function getIndex() {
@@ -67,7 +78,8 @@ module.exports = async (req, res) => {
     }
     initWebPush();
 
-    const { newDateISO, who } = req.body || {};
+    const body = await readJson(req);
+    const { newDateISO, who } = body || {};
     if (!newDateISO) return res.status(400).json({ error: 'Brak newDateISO' });
 
     const index = await getIndex();
