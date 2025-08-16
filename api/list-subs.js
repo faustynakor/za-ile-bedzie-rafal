@@ -11,8 +11,9 @@ async function getIndex(){
   const res = await fetch(url, { headers: { Authorization: `Bearer ${VERCEL_API_TOKEN}` } });
   if (res.status === 404) return [];
   if (!res.ok) throw new Error(`GET index ${res.status} ${await res.text()}`);
-  const json = await res.json();
-  return Array.isArray(json?.items?.[0]?.value) ? json.items[0].value : [];
+  const arr = await res.json();
+  const item = Array.isArray(arr) ? arr.find(x => x?.key === 'index') : null;
+  return Array.isArray(item?.value) ? item.value : [];
 }
 
 async function getItem(key){
@@ -20,9 +21,11 @@ async function getItem(key){
   const res = await fetch(url, { headers: { Authorization: `Bearer ${VERCEL_API_TOKEN}` } });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`GET ${key} ${res.status} ${await res.text()}`);
-  const json = await res.json();
-  return json?.items?.[0]?.value ?? null;
+  const arr = await res.json();
+  const item = Array.isArray(arr) ? arr.find(x => x?.key === key) : null;
+  return item?.value ?? null;
 }
+
 
 module.exports = async (req, res) => {
   if (req.method !== 'GET') return res.status(405).end();

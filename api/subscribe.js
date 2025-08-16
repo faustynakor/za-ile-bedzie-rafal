@@ -36,11 +36,14 @@ async function readJson(req) {
 async function getIndex() {
   const url = apiUrl(`/v1/edge-config/${EDGE_CONFIG_ID}/items`, { key: 'index' });
   const res = await fetch(url, { headers: { Authorization: `Bearer ${VERCEL_API_TOKEN}` } });
-  if (res.status === 404) return [];
+  if (res.status === 404) return []; // klucz "index" nie istnieje
   if (!res.ok) throw new Error(`GET index ${res.status} ${await res.text()}`);
-  const json = await res.json();
-  return Array.isArray(json?.items?.[0]?.value) ? json.items[0].value : [];
+  const arr = await res.json(); // <-- Vercel zwraca TABLICĘ
+  // szukamy elementu z key === 'index' i bierzemy jego value (powinna być tablica stringów)
+  const item = Array.isArray(arr) ? arr.find(x => x?.key === 'index') : null;
+  return Array.isArray(item?.value) ? item.value : [];
 }
+
 
 async function patchEdgeConfig(items) {
   const url = apiUrl(`/v1/edge-config/${EDGE_CONFIG_ID}/items`);
