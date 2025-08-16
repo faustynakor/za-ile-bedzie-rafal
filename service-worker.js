@@ -6,13 +6,24 @@ self.addEventListener("install", event => {
     );
 });
 
-self.addEventListener("fetch", event => {
-    event.respondWith(
-        caches.match(event.request).then(response => {
-            return response || fetch(event.request);
-        })
-    );
+self.addEventListener('fetch', (event) => {
+  const req = event.request;
+
+  event.respondWith((async () => {
+    try {
+      const net = await fetch(req);
+      return net;
+    } catch (err) {
+      const cache = await caches.open('app-cache');
+      const cached = await cache.match(req);
+      if (cached) return cached;
+      const offline = await cache.match('/offline.html');
+      if (offline) return offline;
+      return new Response('Offline / fetch failed', { status: 503, statusText: 'Service Unavailable' });
+    }
+  })());
 });
+
 
 // Odbiór wiadomości push
 self.addEventListener('push', (event) => {
