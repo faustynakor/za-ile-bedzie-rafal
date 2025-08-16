@@ -99,7 +99,7 @@ function startCountdown(date) {
         if (timeDifference <= 0) {
             countdownElement.textContent = "Spotkanie z Rafałem już trwa!";
 
-            gifElement.src = "gifs/gif2.gif"; 
+            gifElement.src = "/gifs/gif2.gif"; 
             gifElement.alt = "Spotkanie trwa";
 
             console.log('[LOG] Odliczanie zatrzymane');
@@ -108,7 +108,7 @@ function startCountdown(date) {
         } else {
 
             if (!isGifSet) {
-                gifElement.src = "gifs/gif1.gif";
+                gifElement.src = "/gifs/gif1.gif";
                 gifElement.alt = "Oczekiwanie na spotkanie";
                 isGifSet = true;
             }
