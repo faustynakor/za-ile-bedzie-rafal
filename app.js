@@ -66,7 +66,7 @@ function setMeetingDate() {
             saveDate(dateInput);
             
             try {
-                await notifyDateChanged(new Date(dateInput).toISOString(), "Użytkownik");
+                await notifyDateChanged(new Date(dateInput).toISOString());
                 console.log("[LOG] Broadcast push wysłany");
             } catch (e) {
                 console.error("[LOG] Błąd wysyłki broadcastu:", e);

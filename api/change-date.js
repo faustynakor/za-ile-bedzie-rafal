@@ -81,7 +81,7 @@ module.exports = async (req, res) => {
     initWebPush();
 
     const body = await readJson(req);
-    const { newDateISO, who } = body || {};
+    const { newDateISO } = body || {};
     if (!newDateISO) return res.status(400).json({ error: 'Brak newDateISO' });
 
     const index = await getIndex();
@@ -95,8 +95,8 @@ module.exports = async (req, res) => {
       if (!sub) { deadKeys.push(key); return; }
 
       const payload = JSON.stringify({
-        title: 'Data została zmieniona',
-        body: `${who ? `${who} ustawił(a) nową datę: ` : 'Nowa data: '}${newDateISO}`,
+        title: 'Data spotkania została zmieniona!',
+        body: `${'Nowa data: '}${newDateISO}`,
         tag: 'date-changed',
         data: { newDateISO }
       });
