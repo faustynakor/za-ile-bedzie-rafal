@@ -1,114 +1,98 @@
-
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Za ile będzie Rafał?</title>
-    <link href="https://fonts.googleapis.com/css2?family=Sour+Gummy:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Za ile będzie Rafał?</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sour+Gummy:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
-    <div id="app">
-        <h1>Za ile będzie Rafał?</h1>
-        <label for="meeting-time">Data i godzina spotkania:</label>
-        <input type="datetime-local" id="meeting-time">
-        <button onclick="setMeetingDate(); ">Zatwierdź i odliczaj!</button>
-        <div id="countdown"></div>
+  <div id="app">
+    <h1>Za ile będzie Rafał?</h1>
+
+    <label for="meeting-time">Data i godzina spotkania:</label>
+    <input type="datetime-local" id="meeting-time"/>
+
+    <button id="btnSetDate" type="button">Zatwierdź i odliczaj!</button>
+
+    <div id="countdown"></div>
 
     <div id="gif-container">
-        <img id="gif" src="/gifs/gif1.gif" alt="Oczekiwanie na spotkanie" style="width: 300px; height: auto;">
+      <img id="gif" src="/gifs/gif1.gif" alt="Oczekiwanie na spotkanie" width="300" height="auto"/>
     </div>
 
-    <button id="btnEnablePush">Włącz powiadomienia</button>
-    <script type="module">
-        import { enablePush } from './push.js';
-        document.getElementById('btnEnablePush').addEventListener('click', async () => {
-            await enablePush();
-            alert('Powiadomienia włączone!');
-        });
-    </script>
-
-    
+    <button id="btnEnablePush" type="button">Włącz powiadomienia</button>
+    <!-- debug kontenery (pojawią się tylko z ?debug=1) -->
+    <div id="debugControls" class="hidden">
+      <button id="btnEnablePushDebug" type="button">Włącz powiadomienia (debug)</button>
+      <button id="btnResetPush" type="button">Reset subskrypcji</button>
     </div>
-    <script type="module" src="app.js"></script>
+  </div>
 
-    <div id="custom-alert" class="modal hidden">
-        <div class="modal-content">
-            <p>Czy na pewno chcesz potwierdzić datę? Jeszcze masz szansę na zmianę!</p>
-            <button id="confirm-yes">Nie! Już zmieniam datę</button>
-            <button id="confirm-no">Tak, potwierdzam</button>
-        </div>
+  <!-- Modal potwierdzenia -->
+  <div id="custom-alert" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="alert-title">
+    <div class="modal-content">
+      <p id="alert-title">Czy na pewno chcesz potwierdzić datę? Jeszcze masz szansę na zmianę!</p>
+      <div class="modal-actions">
+        <button id="confirm-yes" type="button">Nie! Już zmieniam datę</button>
+        <button id="confirm-no" type="button">Tak, potwierdzam</button>
+      </div>
     </div>
+  </div>
 
-    <button id="btnEnablePush">Włącz powiadomienia (debug)</button>
-<button id="btnResetPush">Reset subskrypcji</button>
-
-    <script type="module">
+  <!-- główny kod aplikacji -->
+  <script type="module">
     import { enablePush } from './push.js';
+    import './app.js'; // udostępnia window.setMeetingDate
 
-    async function resetPush() {
-        const reg = await navigator.serviceWorker.getRegistration();
-        const sub = await reg?.pushManager.getSubscription();
-        if (sub) { await sub.unsubscribe().catch(()=>{}); console.log('[DEBUG] stara subskrypcja usunięta'); }
+    // powiązanie przycisku z funkcją z app.js (unikamy inline onclick)
+    const btnSetDate = document.getElementById('btnSetDate');
+    btnSetDate?.addEventListener('click', () => window.setMeetingDate?.());
+
+    // standardowe włączanie powiadomień
+    document.getElementById('btnEnablePush')?.addEventListener('click', async () => {
+      const sub = await enablePush();
+      if (sub) alert('Powiadomienia włączone!');
+    });
+
+    // tryb debug tylko gdy ?debug=1
+    const url = new URL(location.href);
+    const isDebug = url.searchParams.get('debug') === '1';
+    if (isDebug) {
+      document.getElementById('debugControls')?.classList.remove('hidden');
+
+      // lazy import helperów debugowych
+      (async () => {
+        const { resetPush } = await import('./push-debug.js').catch(() => ({}));
+
+        document.getElementById('btnEnablePushDebug')?.addEventListener('click', async () => {
+          const sub = await enablePush();
+          console.log('[DEBUG] enablePush ->', sub ? 'OK' : 'FAIL');
+          const r = await fetch('/api/list-subs').catch(() => null);
+          console.log('[DEBUG] /api/list-subs ->', r ? await r.text() : 'fetch failed');
+        });
+
+        document.getElementById('btnResetPush')?.addEventListener('click', async () => {
+          if (resetPush) {
+            await resetPush();
+            alert('Reset OK — teraz kliknij "Włącz powiadomienia (debug)"');
+          } else {
+            alert('Brak push-debug.js — pomiń reset lub dodaj plik.');
+          }
+        });
+      })();
     }
+  </script>
 
-    document.getElementById('btnEnablePush').onclick = async () => {
-        const sub = await enablePush();
-        console.log('[DEBUG] enablePush ->', sub ? 'OK' : 'FAIL');
-        const r = await fetch('/api/list-subs');
-        console.log('[DEBUG] /api/list-subs ->', await r.text());
-    };
-
-    document.getElementById('btnResetPush').onclick = async () => {
-        await resetPush();
-        alert('Reset OK — teraz kliknij "Włącz powiadomienia (debug)"');
-    };
-    </script>
-
-    
-    <style>
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .hidden {
-            display: none;
-        }
-        .modal-content {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-        }
-        button {
-            margin: 10px;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        #confirm-yes {
-            background-color: #86cffc ;
-            color: white;
-        }
-        #confirm-no {
-            background-color:#dcd0ce;
-            color: white;
-        }
-    </style>
-    
+  <style>
+    .modal{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;background:rgba(0,0,0,.5);z-index:1000}
+    .hidden{display:none}
+    .modal-content{background:#fff;padding:20px;border-radius:8px;max-width:420px;width:calc(100% - 32px);text-align:center}
+    .modal-actions{display:flex;gap:12px;justify-content:center;margin-top:12px}
+    button{margin:10px;padding:10px 20px;border:none;border-radius:5px;cursor:pointer}
+    #confirm-yes{background:#86cffc;color:#fff}
+    #confirm-no{background:#dcd0ce;color:#fff}
+  </style>
 </body>
 </html>
-
-
-
-
