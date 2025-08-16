@@ -49,7 +49,6 @@ export async function enablePush() {
   }
 }
 
-// Wołaj to zawsze PO zmianie daty przez użytkownika
 export async function notifyDateChanged(newDateISO, who = '') {
   try {
     const resp = await fetch('/api/change-date', {
@@ -58,7 +57,7 @@ export async function notifyDateChanged(newDateISO, who = '') {
       body: JSON.stringify({ newDateISO, who })
     });
     const text = await resp.text();
-    console.log('CHANGE-DATE RESP', resp.status, text); // << zobaczysz sent / removed albo błąd
+    console.log('[LOG] CHANGE-DATE RESP', resp.status, text); 
     if (!resp.ok) throw new Error(text);
   } catch (e) {
     console.error('notifyDateChanged error', e);

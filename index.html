@@ -56,7 +56,6 @@
     document.getElementById('btnEnablePush').onclick = async () => {
         const sub = await enablePush();
         console.log('[DEBUG] enablePush ->', sub ? 'OK' : 'FAIL');
-        // po zapisaniu subskrypcji od razu sprawdzimy listę
         const r = await fetch('/api/list-subs');
         console.log('[DEBUG] /api/list-subs ->', await r.text());
     };

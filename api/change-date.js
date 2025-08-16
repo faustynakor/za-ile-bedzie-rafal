@@ -1,4 +1,3 @@
-// /api/change-date.js
 const webpush = require('web-push');
 
 const EDGE_CONFIG_ID = process.env.EDGE_CONFIG_ID;

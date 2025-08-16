@@ -1,4 +1,3 @@
-// /api/list-subs.js
 const EDGE_CONFIG_ID = process.env.EDGE_CONFIG_ID;
 const VERCEL_API_TOKEN = process.env.VERCEL_API_TOKEN;
 const EDGE_TEAM_ID = process.env.EDGE_TEAM_ID || '';

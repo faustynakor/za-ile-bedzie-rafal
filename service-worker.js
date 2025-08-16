@@ -19,14 +19,14 @@ self.addEventListener('push', (event) => {
       icon: '/icon-192.png',
       badge: '/icon-192.png',
       data: data.data || {},
-      requireInteraction: true,   // nie zniknie od razu
-      renotify: true              // ponowne notyfikacje nie będą ciche
+      requireInteraction: true,  
+      renotify: true              
     })
   );
 });
 
 self.addEventListener('notificationclick', (event) => {
-  console.log('[SW] notificationclick', event.notification?.data);
+  console.log('[LOG] SW notificationclick', event.notification?.data);
   event.notification.close();
   const url = '/';
   event.waitUntil(

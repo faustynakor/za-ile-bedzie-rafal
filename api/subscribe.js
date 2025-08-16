@@ -1,4 +1,3 @@
-// /api/subscribe.js
 const crypto = require('crypto');
 
 const EDGE_CONFIG_ID = process.env.EDGE_CONFIG_ID;
