@@ -28,11 +28,18 @@ export async function enablePush() {
       applicationServerKey: await urlBase64ToUint8Array(publicKey)
     });
 
-    await fetch('/api/subscribe', {
+    const resp = await fetch('/api/subscribe', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(subscription)
     });
+    if (!resp.ok) {
+      const txt = await resp.text().catch(() => '');
+      console.error('SUBSCRIBE FAILED', resp.status, txt);
+      alert('Błąd subskrypcji push: ' + resp.status);
+      return null;
+    }
+    console.log('[LOG] SUBSCRIBE OK');
 
     return subscription;
   } catch (e) {
