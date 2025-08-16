@@ -1,17 +1,25 @@
-// /api/change-date.js
-export const config = { runtime: 'nodejs18.x' };
+// /api/change-date.js (CommonJS)
+const webpush = require('web-push');
 
 const EDGE_CONFIG_ID = process.env.EDGE_CONFIG_ID;
 const VERCEL_API_TOKEN = process.env.VERCEL_API_TOKEN;
 const EDGE_TEAM_ID = process.env.EDGE_TEAM_ID || '';
 
-function apiUrl(path, qp = '') {
-  const team = EDGE_TEAM_ID ? (qp ? `${qp}&teamId=${EDGE_TEAM_ID}` : `?teamId=${EDGE_TEAM_ID}`) : (qp || '');
-  return `https://api.vercel.com${path}${team}`;
+function qs(obj) {
+  const p = new URLSearchParams(obj);
+  const s = p.toString();
+  return s ? `?${s}` : '';
+}
+function apiUrl(path, params) {
+  const base = `https://api.vercel.com${path}`;
+  const extra = Object.assign({}, params || {});
+  if (EDGE_TEAM_ID) extra.teamId = EDGE_TEAM_ID;
+  const suffix = qs(extra);
+  return `${base}${suffix}`;
 }
 
 async function getIndex() {
-  const url = apiUrl(`/v1/edge-config/${EDGE_CONFIG_ID}/items`, `?key=index`);
+  const url = apiUrl(`/v1/edge-config/${EDGE_CONFIG_ID}/items`, { key: 'index' });
   const res = await fetch(url, { headers: { Authorization: `Bearer ${VERCEL_API_TOKEN}` } });
   if (res.status === 404) return [];
   if (!res.ok) throw new Error(`GET index ${res.status} ${await res.text()}`);
@@ -20,7 +28,7 @@ async function getIndex() {
 }
 
 async function getItem(key) {
-  const url = apiUrl(`/v1/edge-config/${EDGE_CONFIG_ID}/items`, `?key=${encodeURIComponent(key)}`);
+  const url = apiUrl(`/v1/edge-config/${EDGE_CONFIG_ID}/items`, { key });
   const res = await fetch(url, { headers: { Authorization: `Bearer ${VERCEL_API_TOKEN}` } });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`GET ${key} ${res.status} ${await res.text()}`);
@@ -42,28 +50,25 @@ async function patchEdgeConfig(items) {
   return res.json();
 }
 
-async function loadWebPush() {
-  // web-push w ESM:
-  const mod = await import('web-push');
-  return mod.default || mod;
+function initWebPush() {
+  const { VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT } = process.env;
+  if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
+    throw new Error('Missing VAPID_PUBLIC_KEY or VAPID_PRIVATE_KEY');
+  }
+  webpush.setVapidDetails(VAPID_SUBJECT || 'mailto:admin@example.com', VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
 }
 
-export default async function handler(req, res) {
+module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).end();
 
   try {
-    const { newDateISO, who } = req.body || {};
-    if (!newDateISO) return res.status(400).json({ error: 'Brak newDateISO' });
     if (!EDGE_CONFIG_ID || !VERCEL_API_TOKEN) {
       return res.status(500).json({ error: 'Missing EDGE_CONFIG_ID or VERCEL_API_TOKEN' });
     }
+    initWebPush();
 
-    const webpush = await loadWebPush();
-    const { VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT } = process.env;
-    if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
-      return res.status(500).json({ error: 'Missing VAPID keys' });
-    }
-    webpush.setVapidDetails(VAPID_SUBJECT || 'mailto:admin@example.com', VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
+    const { newDateISO, who } = req.body || {};
+    if (!newDateISO) return res.status(400).json({ error: 'Brak newDateISO' });
 
     const index = await getIndex();
     if (!index.length) return res.status(200).json({ ok: true, sent: 0, removed: 0 });
@@ -106,4 +111,4 @@ export default async function handler(req, res) {
     console.error('broadcast_failed', e);
     return res.status(500).json({ error: 'broadcast_failed', message: String(e) });
   }
-}
+};
