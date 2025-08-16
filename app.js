@@ -65,7 +65,7 @@ function setMeetingDate() {
             modal.classList.add("hidden");
             saveDate(dateInput);
             notifyDateChanged(new Date(dateInput).toISOString(), "Użytkownik");
-            console.log("[LOG] Użytkownik wybrał: tak, potwierdzam");
+            console.log("[LOG] Użytkownik wybrał: Tak, potwierdzam");
             console.log("[LOG] Data została zapisana:", dateInput);
             clearInterval(interval);
             isGifSet = true;
