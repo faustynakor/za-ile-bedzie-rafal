@@ -18,7 +18,7 @@ function apiUrl(path, params) {
 }
 
 function keyFromEndpoint(endpoint) {
-  return 'push:sub:' + crypto.createHash('sha1').update(endpoint).digest('hex');
+  return 'push-sub-' + crypto.createHash('sha1').update(endpoint).digest('hex');
 }
 
 async function readJson(req) {
