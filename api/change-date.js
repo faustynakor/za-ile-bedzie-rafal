@@ -94,9 +94,23 @@ module.exports = async (req, res) => {
       const sub = await getItem(key);
       if (!sub) { deadKeys.push(key); return; }
 
+      function formatDate(iso) {
+        const d = new Date(iso);
+        return d.toLocaleString('pl-PL', {
+          weekday: 'long',    
+          day: 'numeric',    
+          month: 'long',     
+          year: 'numeric',  
+          hour: '2-digit',   
+          minute: '2-digit'  
+        });
+    }
+
+      const prettyDate = formatDate(newDateISO);
+
       const payload = JSON.stringify({
         title: 'Data spotkania została zmieniona!',
-        body: `${'Nowa data: '}${newDateISO}`,
+        body: `${'Nowa data: '}${prettyDate}`,
         tag: 'date-changed',
         data: { newDateISO }
       });
