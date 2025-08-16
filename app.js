@@ -90,7 +90,7 @@ function startCountdown(date) {
     const countdownElement = document.getElementById("countdown");
     const gifElement = document.getElementById("gif");
 
-    console.log('Elementy do odliczania:', countdownElement, gifElement);
+    console.log('[LOG] Elementy do odliczania:', countdownElement, gifElement);
 
     function updateCountdown() {
         const now = new Date();
