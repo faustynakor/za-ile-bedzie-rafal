@@ -40,6 +40,33 @@
             <button id="confirm-no">Tak, potwierdzam</button>
         </div>
     </div>
+
+    <button id="btnEnablePush">Włącz powiadomienia (debug)</button>
+<button id="btnResetPush">Reset subskrypcji</button>
+
+    <script type="module">
+    import { enablePush } from './push.js';
+
+    async function resetPush() {
+        const reg = await navigator.serviceWorker.getRegistration();
+        const sub = await reg?.pushManager.getSubscription();
+        if (sub) { await sub.unsubscribe().catch(()=>{}); console.log('[DEBUG] stara subskrypcja usunięta'); }
+    }
+
+    document.getElementById('btnEnablePush').onclick = async () => {
+        const sub = await enablePush();
+        console.log('[DEBUG] enablePush ->', sub ? 'OK' : 'FAIL');
+        // po zapisaniu subskrypcji od razu sprawdzimy listę
+        const r = await fetch('/api/list-subs');
+        console.log('[DEBUG] /api/list-subs ->', await r.text());
+    };
+
+    document.getElementById('btnResetPush').onclick = async () => {
+        await resetPush();
+        alert('Reset OK — teraz kliknij "Włącz powiadomienia (debug)"');
+    };
+    </script>
+
     
     <style>
         .modal {
