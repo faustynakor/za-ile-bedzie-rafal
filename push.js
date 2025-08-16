@@ -1,4 +1,3 @@
-// push.js
 async function urlBase64ToUint8Array(base64String) {
   const padding = '='.repeat((4 - base64String.length % 4) % 4);
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
@@ -8,40 +7,50 @@ async function urlBase64ToUint8Array(base64String) {
   return output;
 }
 
-async function enablePush() {
+export async function enablePush() {
   try {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-      alert('Twoja przeglądarka nie wspiera powiadomień Web Push.');
-      return;
+      alert('Twoja przeglądarka nie wspiera Web Push.');
+      return null;
     }
 
-    // Uwaga: ścieżka **bez wiodącego /**, scope lokalny, żeby uniknąć 404
     const reg = await navigator.serviceWorker.register('service-worker.js', { scope: './' });
 
     const permission = await Notification.requestPermission();
     if (permission !== 'granted') {
-      alert('Aby otrzymywać powiadomienia, zezwól na nie.');
-      return;
+      alert('Musisz zezwolić na powiadomienia.');
+      return null;
     }
 
-    const applicationServerKey = await urlBase64ToUint8Array(window.VAPID_PUBLIC_KEY);
-    const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey });
-
-    // wyślij subskrypcję do funkcji na Vercel
-    await fetch('/api/send', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ subscription: sub })
+    const publicKey = 'BBM-HfDVsNm_zJT3VYgA7eWg_jRQrrTTKuvYK7L7_KA-NK2KmkyKM6GB3jeCygYBJm4kOtSxCzLnbdp9SNsytG8';
+    const subscription = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: await urlBase64ToUint8Array(publicKey)
     });
 
-    alert('Subskrypcja gotowa! Wysłaliśmy testowe powiadomienie.');
+    await fetch('/api/subscribe', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(subscription)
+    });
+
+    return subscription;
   } catch (e) {
-    console.error(e);
-    alert('Nie udało się włączyć powiadomień: ' + (e && e.message ? e.message : e));
+    console.error('enablePush error', e);
+    alert('Nie udało się włączyć powiadomień.');
+    return null;
   }
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-  const btn = document.getElementById('btnPush');
-  if (btn) btn.addEventListener('click', enablePush);
-});
+// Wołaj to zawsze PO zmianie daty przez użytkownika
+export async function notifyDateChanged(newDateISO, who = '') {
+  try {
+    await fetch('/api/change-date', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ newDateISO, who })
+    });
+  } catch (e) {
+    console.error('notifyDateChanged error', e);
+  }
+}

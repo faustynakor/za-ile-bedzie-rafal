@@ -1,6 +1,7 @@
 // Import Firebase SDK (przez CDN)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
 import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+import { notifyDateChanged } from './push.js';
 
 // Konfiguracja Firebase
 const firebaseConfig = {
@@ -63,6 +64,7 @@ function setMeetingDate() {
         document.getElementById("confirm-no").onclick = () => {
             modal.classList.add("hidden");
             saveDate(dateInput);
+            notifyDateChanged(new Date(dateInput).toISOString(), "Użytkownik");
             console.log("[LOG] Użytkownik wybrał: tak, potwierdzam");
             console.log("[LOG] Data została zapisana:", dateInput);
             clearInterval(interval);

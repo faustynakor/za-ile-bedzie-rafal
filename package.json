@@ -12,6 +12,7 @@
   "dependencies": {
     "firebase": "^11.1.0",
     "live-server": "^1.2.0",
-    "web-push": "^3.6.0"
+    "@vercel/edge-config": "latest",
+    "web-push": "latest"
   }
 }
