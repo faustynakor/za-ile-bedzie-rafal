@@ -27,10 +27,10 @@ function saveDate(date) {
     const dateRef = ref(db, "meetingDate/date");
     set(dateRef, date)
         .then(() => {
-            console.log("Data zapisana pomyślnie:", date);
+            console.log("[LOG] Data zapisana pomyślnie:", date);
         })
         .catch((error) => {
-            console.error("Błąd zapisu danych:", error);
+            console.error("[LOG] Błąd zapisu danych:", error);
         });
 }
 
@@ -42,32 +42,17 @@ function getDate() {
         .then((snapshot) => {
             if (snapshot.exists()) {
                 const savedDate = snapshot.val();
-                console.log("Pobrana data:", savedDate);
+                console.log("[LOG] Pobrana data:", savedDate);
                 document.getElementById("meeting-time").value = savedDate;
                 startCountdown(savedDate);
             } else {
-                console.log("Brak zapisanej daty.");
+                console.log("[LOG] Brak zapisanej daty.");
             }
         })
         .catch((error) => {
             console.error("Błąd pobierania daty:", error);
         });
 }
-
-// Funkcja ustawiająca datę i zapisująca ją w Firebase
-// function setMeetingDate() {
-//     const dateInput = document.getElementById("meeting-time").value;
-//     if (dateInput) {
-//         saveDate(dateInput);
-//         console.log("Data spotkania została zapisana!");
-//         console.log('Zatrzymuję interwał');
-//         clearInterval(interval); 
-//         isGifSet = true;
-//         getDate();
-//     } else {
-//         alert("Proszę podać datę!");
-//     }
-// }
 
 function setMeetingDate() {
     const dateInput = document.getElementById("meeting-time").value;
@@ -82,8 +67,8 @@ function setMeetingDate() {
             modal.classList.add("hidden");
             // Zapisz datę, jeśli użytkownik potwierdzi
             saveDate(dateInput);
-            console.log("Data spotkania została zapisana!");
-            console.log("Zatrzymuję interwał");
+            console.log("[LOG] Data spotkania została zapisana!");
+            console.log("[LOG] Zatrzymuję odliczanie");
             clearInterval(interval);
             isGifSet = true;
             getDate();
@@ -92,14 +77,12 @@ function setMeetingDate() {
         // Obsługa przycisku "Tak, chcę"
         document.getElementById("confirm-yes").onclick = () => {
             modal.classList.add("hidden");
-            console.log("Użytkownik wybrał: Nie, nie chcę.");
+            console.log("[LOG] Użytkownik wybrał: Nie, nie chcę.");
         };
     } else {
         alert("Proszę podać datę!");
     }
 }
-
-
 
 // Funkcja obsługująca odliczanie
 function startCountdown(date) {
@@ -119,7 +102,7 @@ function startCountdown(date) {
             gifElement.src = "gifs/gif2.gif"; 
             gifElement.alt = "Spotkanie trwa";
 
-            console.log('Zatrzymuję interwał');
+            console.log('[LOG] Odliczanie zatrzymane');
             clearInterval(interval); 
             return;
         } else {
@@ -142,7 +125,7 @@ function startCountdown(date) {
 
     updateCountdown();
     interval = setInterval(updateCountdown, 1000);
-    console.log('Interwał uruchomiony:', interval);
+    console.log('[LOG] Odliczania uruchomione:', interval);
 }
 
 // Udostępnienie funkcji w globalnym zakresie
